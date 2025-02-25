@@ -49,13 +49,7 @@ public class Producto {
     }
 
     public String getNombre() {
-        if (this.precio.compareTo(new BigDecimal("10")) < 0) {
-            return this.nombre + " - producto de oferta";
-        } else if (this.precio.compareTo(new BigDecimal("200")) > 0) {
-            return this.nombre + " - producto de calidad";
-        } else {
-            return this.nombre;
-        }
+        return nombre;
     }
 
     public void setNombre(String nombre) {
@@ -63,7 +57,13 @@ public class Producto {
     }
 
     public String getDescripcion() {
-        return descripcion;
+        if (this.precio.compareTo(new BigDecimal("10")) < 0) {
+            return this.descripcion + " - producto de oferta";
+        } else if (this.precio.compareTo(new BigDecimal("200")) > 0) {
+            return this.descripcion + " - producto de calidad";
+        } else {
+            return this.descripcion;
+        }
     }
 
     public void setDescripcion(String descripcion) {
