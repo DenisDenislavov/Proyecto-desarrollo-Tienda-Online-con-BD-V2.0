@@ -45,17 +45,24 @@ public class CompraController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Historial> actualizarCompra(@PathVariable Integer id, @RequestBody Historial historial) {
-        return compraServicio.obtenerHistorialPorId(id)
-                .map(compra -> {
-                    compra.setCliente(historial.getCliente());
-                    compra.setProducto(historial.getProducto());
-                    compra.setFechaCompra(historial.getFechaCompra());
-                    compra.setCantidad(historial.getCantidad());
-                    compra.setTipo(historial.getTipo());
-                    compra.setDescripcion(historial.getDescripcion());
-                    return ResponseEntity.ok(compraServicio.actualizarCompra(compra));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Historial> historialExistente = compraServicio.obtenerHistorialPorId(id);
+
+        if (historialExistente.isPresent()) {
+            Historial compra = historialExistente.get();
+
+            compra.setCliente(historial.getCliente());
+            compra.setProducto(historial.getProducto());
+            compra.setFechaCompra(historial.getFechaCompra());
+            compra.setCantidad(historial.getCantidad());
+            compra.setTipo(historial.getTipo());
+            compra.setDescripcion(historial.getDescripcion());
+
+            Historial historialActualizado = compraServicio.actualizarCompra(compra);
+
+            return ResponseEntity.ok(historialActualizado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
