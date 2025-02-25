@@ -45,15 +45,22 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProducto(@PathVariable Integer id, @RequestBody Producto producto) {
-        return productoService.mostrarProductoPorId(id)
-                .map(productoActualizar -> {
-                    productoActualizar.setNombre(producto.getNombre());
-                    productoActualizar.setDescripcion(producto.getDescripcion());
-                    productoActualizar.setPrecio(producto.getPrecio());
-                    productoActualizar.setStock(producto.getStock());
-                    return ResponseEntity.ok(productoService.guardarProducto(productoActualizar));
-                }).orElse(ResponseEntity.notFound().build());
+        Optional<Producto> productoExistente = productoService.mostrarProductoPorId(id);
 
+        if (productoExistente.isPresent()) {
+            Producto productoActualizar = productoExistente.get();
+
+            productoActualizar.setNombre(producto.getNombre());
+            productoActualizar.setDescripcion(producto.getDescripcion());
+            productoActualizar.setPrecio(producto.getPrecio());
+            productoActualizar.setStock(producto.getStock());
+
+            Producto productoActualizado = productoService.guardarProducto(productoActualizar);
+
+            return ResponseEntity.ok(productoActualizado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
