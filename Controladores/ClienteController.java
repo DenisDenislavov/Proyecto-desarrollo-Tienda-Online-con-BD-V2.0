@@ -38,17 +38,24 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizarCliente(@PathVariable Integer id, @RequestBody Cliente cliente) {
-        return clienteService.mostrarClientePorId(id)
-                .map(c -> {
-                    c.setNombre(cliente.getNombre());
-                    c.setApellido(cliente.getApellido());
-                    c.setNickname(cliente.getNickname());
-                    c.setPassword(cliente.getPassword());
-                    c.setTelefono(cliente.getTelefono());
-                    c.setDomicilio(cliente.getDomicilio());
-                    return ResponseEntity.ok(clienteService.guardarCliente(c));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Cliente> clienteExistente = clienteService.mostrarClientePorId(id);
+
+        if (clienteExistente.isPresent()) {
+            Cliente c = clienteExistente.get();
+
+            c.setNombre(cliente.getNombre());
+            c.setApellido(cliente.getApellido());
+            c.setNickname(cliente.getNickname());
+            c.setPassword(cliente.getPassword());
+            c.setTelefono(cliente.getTelefono());
+            c.setDomicilio(cliente.getDomicilio());
+
+            Cliente clienteActualizado = clienteService.actualizarCliente(c);
+
+            return ResponseEntity.ok(clienteActualizado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
